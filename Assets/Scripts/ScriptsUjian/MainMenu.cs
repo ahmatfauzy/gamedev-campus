@@ -8,9 +8,6 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button playButton;
     [SerializeField] private Button quitButton;
 
-    [Header("Scene Names")]
-    [SerializeField] private string levelSelectScene = "LevelSelect";
-
     private void Start()
     {
         Cursor.lockState = CursorLockMode.None;
@@ -26,7 +23,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnPlayClicked()
     {
-        SceneManager.LoadScene(levelSelectScene);
+        SceneManager.LoadScene("Level");
     }
 
     public void OnQuitClicked()

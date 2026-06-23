@@ -110,6 +110,16 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(levelSelectScene);
     }
 
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
+    }
+
     public bool IsMissionComplete() => isMissionComplete;
     public bool IsMissionFailed() => isMissionFailed;
     public float GetCurrentTime() => currentTime;
@@ -136,7 +146,7 @@ public class GameManager : MonoBehaviour
 
         float boxW = 200;
         float boxH = 55;
-        float x = Screen.width - boxW - 30;
+        float x = 30;
         float y = 30;
 
         GUI.Box(new Rect(x, y, boxW, boxH), "");

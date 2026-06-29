@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class mobil : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class mobil : MonoBehaviour
     private float currentSteerAngle, currentbreakForce;
     private bool isBreaking;
     private Rigidbody rb;
+
+    private float uiGasInput;
+    private float uiMundurInput;
+    private bool uiRemInput;
 
     [Header("Settings")]
     [SerializeField] private float motorForce;
@@ -35,7 +40,39 @@ public class mobil : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = centerOfMass;
+
+        HubungkanTombol("Gas", TekanGas, LepasGas);
+        HubungkanTombol("Rem", TekanRem, LepasRem);
+        HubungkanTombol("Mundur", TekanMundur, LepasMundur);
     }
+
+    private void HubungkanTombol(string nama, UnityEngine.Events.UnityAction down, UnityEngine.Events.UnityAction up)
+    {
+        GameObject tombol = GameObject.Find(nama);
+        if (tombol != null)
+        {
+            EventTrigger trigger = tombol.GetComponent<EventTrigger>();
+            if (trigger == null)
+                trigger = tombol.AddComponent<EventTrigger>();
+
+            EventTrigger.Entry entryDown = new EventTrigger.Entry();
+            entryDown.eventID = EventTriggerType.PointerDown;
+            entryDown.callback.AddListener((data) => { down(); });
+            trigger.triggers.Add(entryDown);
+
+            EventTrigger.Entry entryUp = new EventTrigger.Entry();
+            entryUp.eventID = EventTriggerType.PointerUp;
+            entryUp.callback.AddListener((data) => { up(); });
+            trigger.triggers.Add(entryUp);
+        }
+    }
+
+    public void TekanGas() { uiGasInput = 1f; }
+    public void LepasGas() { uiGasInput = 0f; }
+    public void TekanRem() { uiRemInput = true; }
+    public void LepasRem() { uiRemInput = false; }
+    public void TekanMundur() { uiMundurInput = -1f; }
+    public void LepasMundur() { uiMundurInput = 0f; }
 
     private void FixedUpdate()
     {
@@ -56,11 +93,28 @@ public class mobil : MonoBehaviour
 
             bool gas = SimpleInput.GetButton("Gas") || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
             bool rem = SimpleInput.GetButton("Rem") || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+            bool mundur = SimpleInput.GetButton("Mundur") || Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
-            if (gas)
+            if (rem || uiRemInput)
+            {
+                verticalInput = 0f;
+                isBreaking = true;
+            }
+            else if (gas || uiGasInput > 0f)
+            {
                 verticalInput = 1f;
-            else if (rem)
+                isBreaking = false;
+            }
+            else if (mundur || uiMundurInput < 0f)
+            {
                 verticalInput = -1f;
+                isBreaking = false;
+            }
+            else
+            {
+                verticalInput = 0f;
+                isBreaking = false;
+            }
         }
         else
         {

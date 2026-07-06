@@ -10808,7 +10808,8 @@ GameObject:
   - component: {fileID: 7834664877975148822}
   - component: {fileID: 7834664877975148821}
   - component: {fileID: 7834664877975148820}
-  - component: {fileID: 7834664877975148819}
+   - component: {fileID: 7834664877975148819}
+   - component: {fileID: 7834664877975148823}
   m_Layer: 0
   m_Name: Pickup
   m_TagString: Untagged
@@ -19155,17 +19156,25 @@ MonoBehaviour:
     value: 0
   valueMultiplier: 1
   deadzoneRadius: 0
---- !u!4 &4891731951213678005
-Transform:
+--- !u!224 &4891731951213678005
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4787851099071924860}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -31027,6 +31036,24 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.2859704, y: 1.7932248, z: 4.398433}
   m_Center: {x: -0.000000834465, y: 1.1168559, z: -0.16744733}
+--- !u!114 &7834664877975148823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2075488668793605636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0adf7a7352042ad8287d87b2b3b2239, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OutOfBounds
+  xMin: -70
+  xMax: 70
+  zMin: -80
+  zMax: 80
+  yMin: -10
+  gameManager: {fileID: 2300000003}
 --- !u!33 &7843110922674782662
 MeshFilter:
   m_ObjectHideFlags: 0

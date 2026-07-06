@@ -264,7 +264,7 @@ public class GameManager : MonoBehaviour
             alignment = TextAnchor.MiddleCenter
         };
         subStyle.normal.textColor = Color.white;
-        GUI.Label(new Rect(x, y + 70, boxW, 50), "Waktu Habis!", subStyle);
+        GUI.Label(new Rect(x, y + 70, boxW, 50), "Misi Gagal!", subStyle);
 
         float btnY = y + 145;
         float btnW = 200;

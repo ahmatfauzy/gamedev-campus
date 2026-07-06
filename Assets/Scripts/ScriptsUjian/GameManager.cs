@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject missionCompletePanel;
     [SerializeField] private GameObject missionFailedPanel;
 
+    private PanelLastController panelLastController;
+
     [Header("Return to Menu")]
     [SerializeField] private string mainMenuScene = "MainMenu";
     [SerializeField] private string levelSelectScene = "LevelSelect";
@@ -38,6 +40,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         currentTime = timeLimit;
+        if (missionCompletePanel != null)
+            panelLastController = missionCompletePanel.GetComponent<PanelLastController>();
     }
 
     private void Update()
@@ -60,7 +64,9 @@ public class GameManager : MonoBehaviour
         isMissionComplete = true;
         starsEarned = CalculateStars();
 
-        if (missionCompletePanel != null)
+        if (panelLastController != null)
+            panelLastController.Show(true, starsEarned);
+        else if (missionCompletePanel != null)
             missionCompletePanel.SetActive(true);
 
         if (missionCompleteSound != null && audioSource != null)
@@ -79,7 +85,9 @@ public class GameManager : MonoBehaviour
 
         isMissionFailed = true;
 
-        if (missionFailedPanel != null)
+        if (panelLastController != null)
+            panelLastController.Show(false, 0);
+        else if (missionFailedPanel != null)
             missionFailedPanel.SetActive(true);
 
         if (missionFailedSound != null && audioSource != null)
@@ -138,6 +146,9 @@ public class GameManager : MonoBehaviour
     {
         if (!isMissionComplete && !isMissionFailed)
             DrawTimer();
+
+        bool useUiPanel = missionCompletePanel != null || missionFailedPanel != null;
+        if (useUiPanel) return;
 
         if (isMissionComplete)
             DrawMissionComplete();

@@ -6,7 +6,7 @@ public class CarController : MonoBehaviour
     public float moveSpeed = 10f;
     public float turnSpeed = 100f;
 
-    private float moveInput;
+    public float moveInput;
     private float turnInput;
     
     // Variabel untuk menampung input dari UI Canvas

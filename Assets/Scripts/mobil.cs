@@ -6,7 +6,8 @@ public class mobil : MonoBehaviour
     [Header("Input")]
     [SerializeField] private bool useGasAndBrake = true;
 
-    private float horizontalInput, verticalInput;
+    private float horizontalInput;
+    public float verticalInput { get; private set; }
     private float currentSteerAngle, currentbreakForce;
     private bool isBreaking;
     private Rigidbody rb;

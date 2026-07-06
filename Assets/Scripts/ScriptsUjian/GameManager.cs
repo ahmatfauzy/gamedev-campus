@@ -64,7 +64,11 @@ public class GameManager : MonoBehaviour
             missionCompletePanel.SetActive(true);
 
         if (missionCompleteSound != null && audioSource != null)
+        {
+            if (AudioManager.Instance != null)
+                audioSource.volume = AudioManager.Instance.SFXVolume;
             audioSource.PlayOneShot(missionCompleteSound);
+        }
 
         Time.timeScale = 0f;
     }
@@ -79,7 +83,11 @@ public class GameManager : MonoBehaviour
             missionFailedPanel.SetActive(true);
 
         if (missionFailedSound != null && audioSource != null)
+        {
+            if (AudioManager.Instance != null)
+                audioSource.volume = AudioManager.Instance.SFXVolume;
             audioSource.PlayOneShot(missionFailedSound);
+        }
 
         Time.timeScale = 0f;
     }

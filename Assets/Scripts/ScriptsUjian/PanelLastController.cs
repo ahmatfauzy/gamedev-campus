@@ -1,42 +1,101 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.SceneManagement;
-using System.Collections.Generic;
 
 public class PanelLastController : MonoBehaviour
 {
-    [Header("References")]
+    [Header("Panel References")]
+    [SerializeField] private GameObject successPanel;
+    [SerializeField] private GameObject failedPanel;
     [SerializeField] private GameManager gameManager;
-    [SerializeField] private TextMeshProUGUI messageText;
+    [SerializeField] private TextMeshProUGUI successText;
 
     private Button nextButton;
-    private Button retryButton;
+    private Button successRetryButton;
+    private Button failRetryButton;
+    private Transform starContainer;
     private Image[] starImages;
     private bool initialized;
     private Sprite starFilledSprite;
     private Sprite starEmptySprite;
 
-    private void Start()
+    private void Awake()
     {
-        if (gameManager == null)
-            gameManager = FindObjectOfType<GameManager>();
-
-        if (messageText == null)
-            messageText = GetComponentInChildren<TextMeshProUGUI>();
-
         starFilledSprite = GenerateStarSprite(new Color(1f, 0.85f, 0f));
         starEmptySprite = GenerateStarSprite(new Color(0.25f, 0.25f, 0.25f));
     }
 
-    private void EnsureUI()
+    private void Start()
     {
-        if (initialized) return;
+        if (gameManager == null)
+            gameManager = FindObjectOfType<GameManager>();
+    }
+
+    public void Show(bool success, int stars)
+    {
+        if (success)
+        {
+            successPanel.SetActive(true);
+            failedPanel.SetActive(false);
+            SetupSuccess(stars);
+        }
+        else
+        {
+            successPanel.SetActive(false);
+            failedPanel.SetActive(true);
+            SetupFailed();
+        }
+    }
+
+    private void SetupSuccess(int stars)
+    {
+        if (!initialized)
+            InitSuccess();
+
+        for (int i = 0; i < starImages.Length; i++)
+        {
+            if (starImages[i] != null)
+            {
+                bool earned = i < stars;
+                starImages[i].sprite = earned ? starFilledSprite : starEmptySprite;
+            }
+        }
+
+        if (successText != null)
+            successText.text = "MISI SELESAI!";
+
+        nextButton.gameObject.SetActive(true);
+        successRetryButton.gameObject.SetActive(true);
+    }
+
+    private void InitSuccess()
+    {
         initialized = true;
 
-        RectTransform panelRect = GetComponent<RectTransform>();
+        starContainer = successPanel.transform.Find("Bintang");
+        if (starContainer == null) return;
+
+        nextButton = successPanel.transform.Find("PlayNext")?.GetComponent<Button>();
+        successRetryButton = successPanel.transform.Find("PlayUlangi")?.GetComponent<Button>();
+
+        if (nextButton != null)
+        {
+            nextButton.onClick.RemoveAllListeners();
+            nextButton.onClick.AddListener(OnNext);
+        }
+
+        if (successRetryButton != null)
+        {
+            successRetryButton.onClick.RemoveAllListeners();
+            successRetryButton.onClick.AddListener(OnRetry);
+        }
 
         starImages = new Image[3];
+        float starSize = 60f;
+        float spacing = 20f;
+        float totalW = starSize * 3 + spacing * 2;
+        float startX = -totalW / 2f + starSize / 2f;
+
         for (int i = 0; i < 3; i++)
         {
             GameObject starObj = new GameObject("Star" + (i + 1), typeof(RectTransform));
@@ -44,68 +103,48 @@ public class PanelLastController : MonoBehaviour
             starObj.AddComponent<Image>();
 
             RectTransform starRt = starObj.GetComponent<RectTransform>();
-            starRt.SetParent(panelRect, false);
-
-            float starSize = 50f;
-            float spacing = 15f;
-            float totalW = starSize * 3 + spacing * 2;
-            float startX = -totalW / 2f + starSize / 2f;
+            starRt.SetParent(starContainer, false);
 
             starRt.anchorMin = new Vector2(0.5f, 0.5f);
             starRt.anchorMax = new Vector2(0.5f, 0.5f);
             starRt.sizeDelta = new Vector2(starSize, starSize);
-            starRt.anchoredPosition = new Vector2(startX + i * (starSize + spacing), 50f);
+            starRt.anchoredPosition = new Vector2(startX + i * (starSize + spacing), 0f);
 
             Image img = starObj.GetComponent<Image>();
             img.sprite = starEmptySprite;
             img.raycastTarget = false;
             starImages[i] = img;
         }
-
-        float btnY = -60f;
-        nextButton = CreateButton(panelRect, "NextButton", "LEVEL NEXT", new Vector2(65, btnY), OnNext);
-        retryButton = CreateButton(panelRect, "RetryButton", "ULANGI", new Vector2(-65, btnY), OnRetry);
     }
 
-    private Button CreateButton(RectTransform parent, string name, string label, Vector2 pos, UnityEngine.Events.UnityAction onClick)
+    private void SetupFailed()
     {
-        GameObject btnObj = new GameObject(name, typeof(RectTransform));
-        btnObj.AddComponent<CanvasRenderer>();
-        btnObj.AddComponent<Image>();
-        btnObj.AddComponent<Button>();
+        if (failRetryButton == null)
+        {
+            failRetryButton = failedPanel.transform.Find("PlayUlangi")?.GetComponent<Button>();
+            if (failRetryButton != null)
+            {
+                failRetryButton.onClick.RemoveAllListeners();
+                failRetryButton.onClick.AddListener(OnRetry);
+            }
+        }
+    }
 
-        RectTransform btnRt = btnObj.GetComponent<RectTransform>();
-        btnRt.SetParent(parent, false);
-        btnRt.anchorMin = new Vector2(0.5f, 0.5f);
-        btnRt.anchorMax = new Vector2(0.5f, 0.5f);
-        btnRt.sizeDelta = new Vector2(200, 45);
-        btnRt.anchoredPosition = pos;
+    private void OnNext()
+    {
+        Time.timeScale = 1f;
+        int next = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex + 1;
+        if (next < UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings)
+            UnityEngine.SceneManagement.SceneManager.LoadScene(next);
+        else
+            UnityEngine.SceneManagement.SceneManager.LoadScene("LevelSelect");
+    }
 
-        Image bg = btnObj.GetComponent<Image>();
-        bg.color = new Color(0.15f, 0.15f, 0.15f, 0.9f);
-
-        GameObject txtObj = new GameObject("Text", typeof(RectTransform));
-        txtObj.AddComponent<CanvasRenderer>();
-        txtObj.AddComponent<TextMeshProUGUI>();
-
-        RectTransform txtRt = txtObj.GetComponent<RectTransform>();
-        txtRt.SetParent(btnRt, false);
-        txtRt.anchorMin = Vector2.zero;
-        txtRt.anchorMax = Vector2.one;
-        txtRt.sizeDelta = Vector2.zero;
-        txtRt.anchoredPosition = Vector2.zero;
-
-        TextMeshProUGUI tmp = txtObj.GetComponent<TextMeshProUGUI>();
-        tmp.text = label;
-        tmp.fontSize = 22;
-        tmp.fontStyle = FontStyles.Bold;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.white;
-
-        Button btn = btnObj.GetComponent<Button>();
-        btn.targetGraphic = bg;
-        btn.onClick.AddListener(onClick);
-        return btn;
+    private void OnRetry()
+    {
+        Time.timeScale = 1f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 
     private Vector2[] GetStarPoints(float cx, float cy, float outerR, float innerR)
@@ -163,52 +202,5 @@ public class PanelLastController : MonoBehaviour
 
         tex.Apply();
         return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
-    }
-
-    public void Show(bool success, int stars)
-    {
-        gameObject.SetActive(true);
-        EnsureUI();
-
-        if (messageText != null)
-            messageText.text = success ? "MISI SELESAI!" : "MISI GAGAL!";
-
-        for (int i = 0; i < starImages.Length; i++)
-        {
-            if (starImages[i] != null)
-            {
-                if (success)
-                {
-                    bool earned = i < stars;
-                    starImages[i].sprite = earned ? starFilledSprite : starEmptySprite;
-                }
-                else
-                {
-                    starImages[i].sprite = starEmptySprite;
-                }
-            }
-        }
-
-        if (nextButton != null)
-            nextButton.gameObject.SetActive(success);
-
-        if (retryButton != null)
-            retryButton.gameObject.SetActive(true);
-    }
-
-    private void OnNext()
-    {
-        Time.timeScale = 1f;
-        int next = SceneManager.GetActiveScene().buildIndex + 1;
-        if (next < SceneManager.sceneCountInBuildSettings)
-            SceneManager.LoadScene(next);
-        else
-            SceneManager.LoadScene("LevelSelect");
-    }
-
-    private void OnRetry()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

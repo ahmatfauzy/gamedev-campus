@@ -19,15 +19,7 @@ public class AudioManager : MonoBehaviour
 
     private CarEngineAudioController engineController;
 
-    private AudioClip engineStartupClip;
-    private AudioClip engineIdleClip;
-    private AudioClip engineLowOnClip;
-    private AudioClip engineLowOffClip;
-    private AudioClip engineMedOnClip;
-    private AudioClip engineMedOffClip;
-    private AudioClip engineHighOnClip;
-    private AudioClip engineHighOffClip;
-    private AudioClip engineMaxRPMClip;
+    private AudioClip carNgengClip;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void AutoInitialize()
@@ -74,17 +66,7 @@ public class AudioManager : MonoBehaviour
 
     private void LoadEngineClips()
     {
-        string dir = "Assets/AssetsUjian/Car Engine Sound - i6 German Free/Assets/Audio/i6_german_free/";
-        string res = "Audio/Engine/";
-        engineStartupClip = LoadClip(dir + "startup.wav", res + "startup");
-        engineIdleClip = LoadClip(dir + "idle.wav", res + "idle");
-        engineLowOnClip = LoadClip(dir + "low_on.wav", res + "low_on");
-        engineLowOffClip = LoadClip(dir + "low_off.wav", res + "low_off");
-        engineMedOnClip = LoadClip(dir + "med_on.wav", res + "med_on");
-        engineMedOffClip = LoadClip(dir + "med_off.wav", res + "med_off");
-        engineHighOnClip = LoadClip(dir + "high_on.wav", res + "high_on");
-        engineHighOffClip = LoadClip(dir + "high_off.wav", res + "high_off");
-        engineMaxRPMClip = LoadClip(dir + "maxRPM.wav", res + "maxRPM");
+        carNgengClip = Resources.Load<AudioClip>("Audio/car-ngeng");
     }
 
     private AudioClip LoadClip(string editorPath, string resourcesPath)
@@ -137,11 +119,15 @@ public class AudioManager : MonoBehaviour
 
     private void SetupEngineAudio()
     {
-        if (engineController != null) return;
-
-        if (engineIdleClip == null)
+        if (engineController != null)
         {
-            Debug.LogError("[AudioManager] Engine clips not loaded");
+            Destroy(engineController.gameObject);
+            engineController = null;
+        }
+
+        if (carNgengClip == null)
+        {
+            Debug.LogError("[AudioManager] car-ngeng clip not loaded");
             return;
         }
 
@@ -149,15 +135,7 @@ public class AudioManager : MonoBehaviour
         engineGO.transform.SetParent(transform);
 
         engineController = engineGO.AddComponent<CarEngineAudioController>();
-        engineController.startupClip = engineStartupClip;
-        engineController.idleClip = engineIdleClip;
-        engineController.lowOnClip = engineLowOnClip;
-        engineController.lowOffClip = engineLowOffClip;
-        engineController.medOnClip = engineMedOnClip;
-        engineController.medOffClip = engineMedOffClip;
-        engineController.highOnClip = engineHighOnClip;
-        engineController.highOffClip = engineHighOffClip;
-        engineController.maxRPMClip = engineMaxRPMClip;
+        engineController.carNgengClip = carNgengClip;
     }
 
     private void StopEngineAudio()

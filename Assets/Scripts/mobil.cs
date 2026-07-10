@@ -40,6 +40,7 @@ public class mobil : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        rb.mass = 500;
         rb.centerOfMass = centerOfMass;
 
         HubungkanTombol("Gas", TekanGas, LepasGas);

@@ -13,9 +13,9 @@ EditorBuildSettings:
     guid: d453472d51736cf4d96e6ff3c8db2273
   - enabled: 1
     path: Assets/Scenes/CARPARKING/Level1.unity
-    guid: 2277d0f5a330c7344b3a846568af0cfc
-  - enabled: 1
-    path: Assets/Scenes/CARPARKING/Level1.unity
     guid: b203cc4ad4431ed4f9066d8be7852bf4
+  - enabled: 1
+    path: Assets/Scenes/CARPARKING/Level2.unity
+    guid: d60201aa735a57f4891c83c91e2ae853
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

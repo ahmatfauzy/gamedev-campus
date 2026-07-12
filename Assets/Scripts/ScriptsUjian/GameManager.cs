@@ -64,6 +64,12 @@ public class GameManager : MonoBehaviour
         isMissionComplete = true;
         starsEarned = CalculateStars();
 
+        string sceneName = SceneManager.GetActiveScene().name;
+        LevelProgress.SetLevelCompleted(sceneName);
+        string nextLevel = LevelProgress.GetNextLevelName(sceneName);
+        if (nextLevel != null)
+            LevelProgress.UnlockLevel(nextLevel);
+
         if (panelLastController != null)
             panelLastController.Show(true, starsEarned);
         else if (missionCompletePanel != null)

@@ -133,11 +133,12 @@ public class PanelLastController : MonoBehaviour
     private void OnNext()
     {
         Time.timeScale = 1f;
-        int next = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex + 1;
-        if (next < UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings)
-            UnityEngine.SceneManagement.SceneManager.LoadScene(next);
+        string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        string nextLevel = LevelProgress.GetNextLevelName(currentScene);
+        if (nextLevel != null)
+            UnityEngine.SceneManagement.SceneManager.LoadScene(nextLevel);
         else
-            UnityEngine.SceneManagement.SceneManager.LoadScene("LevelSelect");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Level");
     }
 
     private void OnRetry()

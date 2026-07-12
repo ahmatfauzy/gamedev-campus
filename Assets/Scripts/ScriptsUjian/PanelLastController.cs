@@ -11,6 +11,8 @@ public class PanelLastController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI successText;
 
     private Button nextButton;
+    private TextMeshProUGUI nextButtonText;
+    private string originalNextText;
     private Button successRetryButton;
     private Button failRetryButton;
     private Transform starContainer;
@@ -64,7 +66,22 @@ public class PanelLastController : MonoBehaviour
         if (successText != null)
             successText.text = "MISI SELESAI!";
 
-        nextButton.gameObject.SetActive(true);
+        string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        string nextLevel = LevelProgress.GetNextLevelName(currentScene);
+        if (nextLevel != null)
+        {
+            nextButton.gameObject.SetActive(true);
+            nextButton.interactable = true;
+            if (nextButtonText != null)
+                nextButtonText.text = originalNextText;
+        }
+        else
+        {
+            nextButton.gameObject.SetActive(true);
+            nextButton.interactable = false;
+            if (nextButtonText != null)
+                nextButtonText.text = "COMING SOON";
+        }
         successRetryButton.gameObject.SetActive(true);
     }
 
@@ -76,6 +93,15 @@ public class PanelLastController : MonoBehaviour
         if (starContainer == null) return;
 
         nextButton = successPanel.transform.Find("PlayNext")?.GetComponent<Button>();
+        if (nextButton != null)
+        {
+            TextMeshProUGUI tmp = nextButton.GetComponentInChildren<TextMeshProUGUI>();
+            if (tmp != null)
+            {
+                nextButtonText = tmp;
+                originalNextText = tmp.text;
+            }
+        }
         successRetryButton = successPanel.transform.Find("PlayUlangi")?.GetComponent<Button>();
 
         if (nextButton != null)
@@ -137,8 +163,6 @@ public class PanelLastController : MonoBehaviour
         string nextLevel = LevelProgress.GetNextLevelName(currentScene);
         if (nextLevel != null)
             UnityEngine.SceneManagement.SceneManager.LoadScene(nextLevel);
-        else
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Level");
     }
 
     private void OnRetry()

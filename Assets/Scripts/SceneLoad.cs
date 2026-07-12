@@ -14,6 +14,10 @@ public class SceneLoad : MonoBehaviour
         {
             SetupLevelButtons();
         }
+        else if (gameObject.scene.name == "Level1")
+        {
+            PauseGame();
+        }
     }
 
     private void SetupLevelButtons()
@@ -33,6 +37,16 @@ public class SceneLoad : MonoBehaviour
             bool alwaysUnlocked = levelName == "Level1";
             btn.interactable = alwaysUnlocked || LevelProgress.IsLevelUnlocked(levelName);
         }
+    }
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
     }
 
     public void LoadSceneBaru(string sceneName){

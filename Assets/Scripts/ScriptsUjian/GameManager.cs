@@ -151,7 +151,10 @@ public class GameManager : MonoBehaviour
     private void OnGUI()
     {
         if (!isMissionComplete && !isMissionFailed)
-            DrawTimer();
+        {
+            if (!IsTutorialActive())
+                DrawTimer();
+        }
 
         bool useUiPanel = missionCompletePanel != null || missionFailedPanel != null;
         if (useUiPanel) return;
@@ -161,6 +164,15 @@ public class GameManager : MonoBehaviour
 
         if (isMissionFailed)
             DrawMissionFailed();
+    }
+
+    private bool IsTutorialActive()
+    {
+        GameObject t1 = GameObject.Find("PanelTutorial1");
+        if (t1 != null && t1.activeInHierarchy) return true;
+        GameObject t2 = GameObject.Find("PanelTutorial2");
+        if (t2 != null && t2.activeInHierarchy) return true;
+        return false;
     }
 
     private void DrawTimer()
